@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spider-Man 2099 | Multiverse Downloader & Interactive Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --neon-red: #ff003c;
+            --neon-blue: #00f0ff;
+            --neon-purple: #9d00ff;
+            --dark-bg: #030308;
+            --glitch-val: 0px;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: var(--dark-bg);
+            font-family: 'Rajdhani', sans-serif;
+            color: #ffffff;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(3, 3, 8, 0.8);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-red);
+            border-radius: 2px;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.3) 50%,
+                rgba(0,0,0,0.3)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 99;
+            opacity: 0.35;
+        }
+
+        .glitch-wrapper {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            position: relative;
+            text-shadow: 0 0 20px var(--neon-red);
+            letter-spacing: 4px;
+        }
+
+        @media (min-width: 768px) {
+            .glitch-wrapper {
+                font-size: 6rem;
+                letter-spacing: 8px;
+            }
+        }
+
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+
+        .glitch::before {
+            left: 3px;
+            text-shadow: -2px 0 var(--neon-blue);
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim-2 2s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -3px;
+            text-shadow: -2px 0 var(--neon-red);
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim 1.8s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(12px, 9999px, 80px, 0); }
+            10% { clip: rect(45px, 9999px, 15px, 0); }
+            20% { clip: rect(82px, 9999px, 34px, 0); }
+            30% { clip: rect(23px, 9999px, 85px, 0); }
+            40% { clip: rect(56px, 9999px, 11px, 0); }
+            50% { clip: rect(95px, 9999px, 66px, 0); }
+            60% { clip: rect(44px, 9999px, 33px, 0); }
+            70% { clip: rect(66px, 9999px, 44px, 0); }
+            80% { clip: rect(33px, 9999px, 77px, 0); }
+            90% { clip: rect(11px, 9999px, 88px, 0); }
+            100% { clip: rect(85px, 9999px, 20px, 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(65px, 9999px, 100px, 0); }
+            10% { clip: rect(79px, 9999px, 85px, 0); }
+            20% { clip: rect(34px, 9999px, 4px, 0); }
+            30% { clip: rect(15px, 9999px, 6px, 0); }
+            40% { clip: rect(52px, 9999px, 65px, 0); }
+            50% { clip: rect(21px, 9999px, 33px, 0); }
+            60% { clip: rect(16px, 9999px, 88px, 0); }
+            70% { clip: rect(34px, 9999px, 62px, 0); }
+            80% { clip: rect(4px, 9999px, 94px, 0); }
+            90% { clip: rect(25px, 9999px, 24px, 0); }
+            100% { clip: rect(50px, 9999px, 70px, 0); }
+        }
+
+        .glass-panel {
+            background: rgba(8, 8, 20, 0.45);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 0, 60, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5),
+                        inset 0 0 15px rgba(0, 240, 255, 0.05);
+            transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease;
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(255, 0, 60, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(255, 0, 60, 0.1),
+                        inset 0 0 25px rgba(255, 0, 60, 0.05);
+        }
+
+        .interactive-card {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .depth-element {
+            transform: translateZ(40px);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--neon-red);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--neon-red);
+            transition: transform 0.1s ease, background-color 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+            background: var(--neon-blue);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .cyber-btn {
+            background: transparent;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            border: 1px solid var(--neon-red);
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 0, 60, 0.2);
+            clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.2), transparent);
+            transition: all 0.4s ease;
+        }
+
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+
+        .cyber-btn:hover {
+            background: var(--neon-red);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 30px rgba(255, 0, 60, 0.6);
+            transform: scale(1.02);
+            text-shadow: 0 0 4px #fff;
+        }
+
+        .radar-sweep {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(0, 240, 255, 0.15) 50%, transparent);
+            animation: radar-anim 4s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes radar-anim {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .cyber-pad {
+            position: relative;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+        }
+        
+        .cyber-pad::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--neon-blue);
+            opacity: 0;
+            transition: opacity 0.2s;
+            filter: blur(4px);
+        }
+
+        .cyber-pad:active {
+            transform: scale(0.9);
+        }
+
+        .cyber-pad.active {
+            background: var(--neon-red);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px var(--neon-red);
+        }
+
+        .cyber-pad.active::after {
+            opacity: 0.25;
+        }
+
+        @keyframes scale-up {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-scale-up {
+            animation: scale-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-black text-white h-screen w-screen overflow-hidden font-sans">
+
+    <canvas id="web-canvas" class="fixed top-0 left-0 w-full h-full z-0 pointer-events-auto"></canvas>
+    
+    <div class="scanlines"></div>
+
+    <div id="preloader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030308] px-4">
+        <div class="text-center max-w-lg">
+            <h1 class="glitch-wrapper glitch mb-2" data-text="SPIDER-MAN">SPIDER-MAN</h1>
+            <h2 class="font-['Orbitron'] text-2xl tracking-[0.4em] text-red-600 font-black animate-pulse">2099</h2>
+            <div class="text-xs font-mono tracking-widest text-[#00f0ff] uppercase mt-8 opacity-75">
+                ALCHEMAX SECURE PORTAL DECRYPTION
+            </div>
+            
+            <button id="auth-btn" class="mt-8 px-8 py-3 cyber-btn font-['Orbitron'] tracking-widest text-sm relative group">
+                <span class="relative z-10 flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    AĞI BAĞLA VE BAŞLAT
+                </span>
+            </button>
+            <div class="mt-4 font-mono text-[10px] text-gray-500 max-w-[280px] mx-auto leading-relaxed">
+                *Siber ses sentezleyicisi ve etkileşimli ses motorunu etkinleştirmek için bir defa tıklayın.
+            </div>
+        </div>
+    </div>
+
+    <main id="main-content" class="relative z-10 h-full w-full flex flex-col justify-between p-3 md:p-6 opacity-0 transition-opacity duration-1000 ease-in-out pointer-events-none">
+        
+        <header class="flex justify-between items-center w-full glass-panel p-3 px-6 rounded-lg mb-4">
+            <div class="flex items-center gap-4">
+                <div class="relative flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
+                </div>
+                <div>
+                    <h1 class="font-['Orbitron'] text-md md:text-xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-cyan-400">
+                        MIGUEL O'HARA // EARTH-928
+                    </h1>
+                    <div class="font-mono text-[10px] text-gray-400">MULTIVERSE RECONNAISSANCE CONSOLE v20.99</div>
+                </div>
+            </div>
+            <div class="hidden md:flex flex-col text-right font-mono text-xs text-cyan-400 tracking-wider">
+                <div>SYSTEM COMPATIBLE: ENCRYPTED</div>
+                <div>LATENCY: <span id="ping-text">43ms</span></div>
+            </div>
+        </header>
+
+        <div class="flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch overflow-hidden relative mb-4">
+            
+            <section class="lg:col-span-3 flex flex-col justify-between gap-4 glass-panel p-4 md:p-5 rounded-lg overflow-y-auto">
+                <div>
+                    <div class="flex items-center gap-2 mb-4 pb-2 border-b border-red-500/20">
+                        <svg class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                        </svg>
+                        <h2 class="font-['Orbitron'] text-sm tracking-widest font-bold text-white uppercase">MULTIVERSE STABILIZER</h2>
+                    </div>
+
+                    <p class="text-xs text-gray-400 mb-6 font-mono leading-relaxed">
+                        Aşağıdaki kontrolörleri kaydırarak ağ simülasyonunu, ses perdesini ve boyutsal bozulmaları anlık olarak manipüle edebilirsiniz.
+                    </p>
+
+                    <div class="mb-5">
+                        <div class="flex justify-between items-center text-xs font-mono text-cyan-400 mb-2">
+                            <span>BOYUTSAL GLITCH</span>
+                            <span id="glitch-val-text">0.12</span>
+                        </div>
+                        <input id="slider-glitch" type="range" min="0" max="1" step="0.01" value="0.15">
+                    </div>
+
+                    <div class="mb-5">
+                        <div class="flex justify-between items-center text-xs font-mono text-cyan-400 mb-2">
+                            <span>AĞ GERGİNLİĞİ</span>
+                            <span id="tension-val-text">45.00</span>
+                        </div>
+                        <input id="slider-tension" type="range" min="10" max="100" step="1" value="45">
+                    </div>
+
+                    <div class="mb-5">
+                        <div class="flex justify-between items-center text-xs font-mono text-cyan-400 mb-2">
+                            <span>PORTAL HIZI</span>
+                            <span id="speed-val-text">1.50</span>
+                        </div>
+                        <input id="slider-speed" type="range" min="0.1" max="5" step="0.1" value="1.5">
+                    </div>
+                </div>
+
+                <div class="bg-black/50 p-3 rounded border border-cyan-500/10 font-mono text-[10px] text-gray-400 flex flex-col gap-1 select-text">
+                    <div class="text-red-500 font-bold border-b border-red-500/20 pb-1 mb-1 flex justify-between">
+                        <span>SYS_LOG_FEED</span>
+                        <span class="animate-pulse">ONLINE</span>
+                    </div>
+                    <div id="log-container" class="h-28 overflow-y-auto flex flex-col gap-1 scroll-smooth">
+                        <div>> INITIALIZING AUDIO OSCILLATORS...</div>
+                        <div>> MOUSE WEB DETECTORS ACTIVE.</div>
+                        <div>> PERSISTENT DIMENSIONAL SCANNING...</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="lg:col-span-6 flex flex-col justify-between items-center glass-panel p-4 md:p-6 rounded-lg relative overflow-y-auto">
+                <div class="radar-sweep"></div>
+                
+                <div class="w-full flex justify-between items-center pb-2 border-b border-red-500/20 mb-4 z-10">
+                    <span class="text-xs font-mono text-red-500 tracking-wider font-semibold">TARGET SECURE BLOCK: #8K_2099</span>
+                    <span class="text-xs font-mono text-cyan-400">DEC_SIG: M_HARA</span>
+                </div>
+
+                <div class="w-full flex-grow flex items-center justify-center py-4 z-10 min-h-[220px]">
+                    <div id="tilt-card" class="interactive-card w-full max-w-[450px] cursor-pointer relative group transition-transform duration-100 ease-out">
+                        
+                        <div class="absolute -inset-1.5 bg-gradient-to-r from-red-600 via-cyan-500 to-purple-600 rounded-lg blur-lg opacity-40 group-hover:opacity-85 transition duration-500"></div>
+                        
+                        <div class="relative bg-black rounded-lg overflow-hidden border border-red-500/40 p-2 flex flex-col gap-3">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-cyan-400 shadow-[0_0_10px_#ff003c]"></div>
+                            
+                            <div class="relative overflow-hidden aspect-video w-full bg-[#030308] border border-cyan-500/30 rounded flex items-center justify-center">
+                                
+                                <img src="spider-man-2099-8k-7680x4320-12436.jpg" 
+                                     alt="Spider-Man 2099" 
+                                     class="depth-element w-full h-full object-cover opacity-90 transition-transform duration-500 ease-out group-hover:scale-105"
+                                     onerror="this.src='https://placehold.co/1920x1080/05050a/ff003c?text=SPIDER-MAN+2099+IMAGE'">
+
+                                <div class="absolute inset-0 pointer-events-none border border-cyan-500/20 m-2 flex items-center justify-center">
+                                    <div class="w-6 h-6 border-t-2 border-l-2 border-cyan-400 absolute top-0 left-0"></div>
+                                    <div class="w-6 h-6 border-t-2 border-r-2 border-cyan-400 absolute top-0 right-0"></div>
+                                    <div class="w-6 h-6 border-b-2 border-l-2 border-cyan-400 absolute bottom-0 left-0"></div>
+                                    <div class="w-6 h-6 border-b-2 border-r-2 border-cyan-400 absolute bottom-0 right-0"></div>
+                                </div>
+                            </div>
+
+                            <div class="depth-element grid grid-cols-2 gap-2 text-[10px] md:text-xs font-mono text-gray-400 bg-[#080812] p-2 rounded border border-red-500/10">
+                                <div>RESOLUTION: <span class="text-cyan-400">7680x4320 (8K)</span></div>
+                                <div>COMPRESSION: <span class="text-cyan-400">LOSSLESS</span></div>
+                                <div>ANOMALY LEVEL: <span class="text-red-500 font-bold animate-pulse">CRITICAL</span></div>
+                                <div>DECRYPTION: <span class="text-green-400">STABLE</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full flex flex-col sm:flex-row justify-between items-center gap-3 mt-4 z-10">
+                    <button id="copy-link-btn" class="w-full sm:w-auto px-6 py-2 border border-cyan-500/40 hover:bg-cyan-900/20 text-cyan-400 font-mono text-xs rounded transition flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        </svg>
+                        MULTIVERSE LINK KOPYALA
+                    </button>
+                    
+                    <button id="dl-btn" class="w-full sm:w-auto px-8 py-3 cyber-btn font-bold tracking-widest text-sm flex items-center justify-center gap-3 cursor-pointer">
+                        <span>VERİYİ İNDİR</span>
+                        <svg class="w-4 h-4 text-cyan-400 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <section class="lg:col-span-3 flex flex-col justify-between gap-4 glass-panel p-4 md:p-5 rounded-lg overflow-y-auto">
+                <div>
+                    <div class="flex items-center gap-2 mb-4 pb-2 border-b border-red-500/20">
+                        <svg class="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                        </svg>
+                        <h2 class="font-['Orbitron'] text-sm tracking-widest font-bold text-white uppercase">WEB SLINGER PAD</h2>
+                    </div>
+
+                    <p class="text-xs text-gray-400 mb-4 font-mono leading-relaxed">
+                        Aşağıdaki pedlere basarak boyutlar arası dijital siber ses sentezlerini tetikleyin ve arka planda siber dalgalar saçın!
+                    </p>
+
+                    <div class="grid grid-cols-3 gap-2 mb-6">
+                        <button class="cyber-pad aspect-square rounded flex flex-col items-center justify-center p-1 text-[10px] font-mono hover:border-red-500" data-pad="0">
+                            <span class="text-cyan-400">SLING</span>
+                            <span class="text-[8px] text-gray-500">PEW_01</span>
+                        </button>
+                        <button class="cyber-pad aspect-square rounded flex flex-col items-center justify-center p-1 text-[10px] font-mono hover:border-red-500" data-pad="1">
+                            <span class="text-cyan-400">ZAP</span>
+                            <span class="text-[8px] text-gray-500">DIGI_HUT</span>
+                        </button>
+                        <button class="cyber-pad aspect-square rounded flex flex-col items-center justify-center p-1 text-[10px] font-mono hover:border-red-500" data-pad="2">
+                            <span class="text-cyan-400">RIFT</span>
+                            <span class="text-[8px] text-gray-500">P_SWIFT</span>
+                        </button>
+                        <button class="cyber-pad aspect-square rounded flex flex-col items-center justify-center p-1 text-[10px] font-mono hover:border-red-500" data-pad="3">
+                            <span class="text-red-500">CRASH</span>
+                            <span class="text-[8px] text-gray-500">GLI_AM</span>
+                        </button>
+                        <button class="cyber-pad aspect-square rounded flex flex-col items-center justify-center p-1 text-[10px] font-mono hover:border-red-500" data-pad="4">
+                            <span class="text-red-500">PORTAL</span>
+                            <span class="text-[8px] text-gray-500">TIME_JMP</span>
+                        </button>
+                        <button class="cyber-pad aspect-square rounded flex flex-col items-center justify-center p-1 text-[10px] font-mono hover:border-red-500" data-pad="5">
+                            <span class="text-red-500">SONIC</span>
+                            <span class="text-[8px] text-gray-500">WAVE_Z</span>
+                        </button>
+                        <button class="cyber-pad aspect-square rounded flex flex-col items-center justify-center p-1 text-[10px] font-mono hover:border-red-500" data-pad="6">
+                            <span class="text-purple-400">CYPHER</span>
+                            <span class="text-[8px] text-gray-500">DATA_V</span>
+                        </button>
+                        <button class="cyber-pad aspect-square rounded flex flex-col items-center justify-center p-1 text-[10px] font-mono hover:border-red-500" data-pad="7">
+                            <span class="text-purple-400">STUNT</span>
+                            <span class="text-[8px] text-gray-500">MIG_OH</span>
+                        </button>
+                        <button class="cyber-pad aspect-square rounded flex flex-col items-center justify-center p-1 text-[10px] font-mono hover:border-red-500" data-pad="8">
+                            <span class="text-purple-400">SHOCK</span>
+                            <span class="text-[8px] text-gray-500">ALCHEM</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="border border-cyan-500/20 rounded p-3 bg-black/40">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-mono text-xs text-cyan-400">ARKA PLAN AMBİYANS SESİ</span>
+                        <div class="relative inline-block w-8 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="toggle" id="toggle-ambient" class="toggle-checkbox hidden"/>
+                            <label for="toggle-ambient" class="toggle-label block overflow-hidden h-4 rounded-full bg-gray-700 cursor-pointer border border-cyan-500/40"></label>
+                        </div>
+                    </div>
+                    <div class="font-mono text-[9px] text-gray-500 leading-normal">
+                        Etkinleştirildiğinde Alchemax laboratuvarlarının o derin mekanik hummasını ve fütüristik arka plan gürültüsünü sentezler.
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="flex justify-between items-center w-full font-mono text-[10px] text-gray-400 p-2 border-t border-red-500/20">
+            <div>ALCHEMAX SECURE SERVER // NO ADVERTISEMENTS DETECTED</div>
+            <div>STABILIZER FREQ: <span id="realtime-freq" class="text-red-500 animate-pulse">440.0Hz</span></div>
+        </footer>
+    </main>
+
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-600/90 text-white font-['Orbitron'] tracking-widest text-xs px-6 py-3 rounded-lg border border-cyan-400 shadow-[0_0_20px_#ff003c] pointer-events-none opacity-0 scale-95 transition-all duration-300 z-50">
+        AĞ BAĞLANTISI BAŞARIYLA KOPYALANDI!
+    </div>
+
+    <div id="download-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 px-4">
+        <div class="glass-panel max-w-lg w-full p-6 rounded-xl border border-red-500/40 relative flex flex-col gap-4 animate-scale-up">
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-white font-mono text-xl transition-colors">&times;</button>
+            
+            <h3 class="font-['Orbitron'] text-md md:text-lg font-bold text-red-500 tracking-wider flex items-center gap-2">
+                <svg class="w-5 h-5 text-cyan-400 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                GÜVENLİ MULTIVERSE İNDİRME REHBERİ
+            </h3>
+            
+            <p class="text-xs text-gray-300 font-mono leading-relaxed">
+                Tarayıcı güvenlik duvarı, sandbox kısıtlamaları veya iframe engelleri nedeniyle otomatik indirme tetiklenememiş olabilir. Görseli kaydetmek için lütfen aşağıdaki adımları takip edin:
+            </p>
+            
+            <div class="bg-black/50 p-3 rounded border border-cyan-500/20 font-mono text-[11px] text-gray-300 flex flex-col gap-2">
+                <div class="flex items-start gap-2">
+                    <span class="text-red-500 font-bold">01.</span>
+                    <span>Aşağıdaki görsele <strong class="text-cyan-400">sağ tıklayıp</strong> (mobilde <strong class="text-cyan-400">üzerine basılı tutup</strong>) <strong>"Resmi Farklı Kaydet..."</strong> seçeneğini seçerek doğrudan cihazınıza kaydedebilirsiniz.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                    <span class="text-red-500 font-bold">02.</span>
+                    <span>Ya da sınırlamaları tamamen aşmak için aşağıdaki <strong class="text-cyan-400">"Yeni Sekmede Aç"</strong> butonunu kullanabilirsiniz.</span>
+                </div>
+            </div>
+            
+            <div class="relative rounded overflow-hidden border border-cyan-500/20 aspect-video bg-[#030308] flex items-center justify-center">
+                <img id="modal-preview-img" src="" alt="Spider-Man 2099 Preview" class="w-full h-full object-cover">
+                <div class="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded text-[9px] text-red-500 font-mono tracking-wider border border-red-500/30">
+                    SAĞ TIKLA VE FARKLI KAYDET
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3 mt-2">
+                <button id="open-new-tab-btn" class="px-4 py-2.5 border border-cyan-500/40 hover:bg-cyan-900/20 text-cyan-400 font-mono text-xs rounded transition flex items-center justify-center gap-2 font-semibold">
+                    YENİ SEKMEDE AÇ
+                </button>
+                <button id="modal-close-btn" class="cyber-btn font-['Orbitron'] tracking-widest text-xs py-2.5">
+                    PANELİ KAPAT
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            let audioCtx = null;
+            let ambientOsc = null;
+            let ambientGain = null;
+            let masterGain = null;
+
+            function initAudio() {
+                if (audioCtx) return;
+                
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                masterGain = audioCtx.createGain();
+                masterGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                masterGain.connect(audioCtx.destination);
+                
+                setupAmbientOsc();
+                
+                addLogEntry("> CYBER AUDIO SYNTHESIZER ENGINE DEPLOYED.");
+            }
+
+            function setupAmbientOsc() {
+                if (!audioCtx) return;
+                
+                ambientOsc = audioCtx.createOscillator();
+                ambientGain = audioCtx.createGain();
+                
+                ambientOsc.type = 'sawtooth';
+                ambientOsc.frequency.setValueAtTime(55, audioCtx.currentTime);
+                
+                const lfo = audioCtx.createOscillator();
+                const lfoGain = audioCtx.createGain();
+                lfo.frequency.setValueAtTime(0.5, audioCtx.currentTime);
+                lfoGain.gain.setValueAtTime(10, audioCtx.currentTime);
+                
+                lfo.connect(lfoGain);
+                lfoGain.connect(ambientOsc.frequency);
+                
+                ambientGain.gain.setValueAtTime(0, audioCtx.currentTime);
+                
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(220, audioCtx.currentTime);
+                
+                ambientOsc.connect(filter);
+                filter.connect(ambientGain);
+                ambientGain.connect(masterGain);
+                
+                lfo.start();
+                ambientOsc.start();
+            }
+
+            function triggerSlingSynth(pitchMod = 1) {
+                if (!audioCtx) return;
+                
+                const now = audioCtx.currentTime;
+                
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const filter = audioCtx.createBiquadFilter();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(1200 * pitchMod, now);
+                osc.frequency.exponentialRampToValueAtTime(120 * pitchMod, now + 0.35);
+                
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(1800, now);
+                filter.frequency.exponentialRampToValueAtTime(300, now + 0.3);
+                
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(masterGain);
+                
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+
+            function triggerPadSynth(type) {
+                if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+                
+                const osc1 = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                gain.gain.setValueAtTime(0.35, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+                
+                switch(type) {
+                    case 0:
+                        osc1.type = 'triangle';
+                        osc1.frequency.setValueAtTime(800, now);
+                        osc1.frequency.exponentialRampToValueAtTime(100, now + 0.3);
+                        break;
+                    case 1:
+                        osc1.type = 'square';
+                        osc1.frequency.setValueAtTime(2000, now);
+                        osc1.frequency.linearRampToValueAtTime(40, now + 0.15);
+                        break;
+                    case 2:
+                        osc1.type = 'sawtooth';
+                        osc1.frequency.setValueAtTime(150, now);
+                        osc1.frequency.linearRampToValueAtTime(450, now + 0.4);
+                        break;
+                    case 3:
+                        osc1.type = 'sawtooth';
+                        osc1.frequency.setValueAtTime(90, now);
+                        osc2.type = 'square';
+                        osc2.frequency.setValueAtTime(300, now);
+                        const dev = audioCtx.createGain();
+                        dev.gain.setValueAtTime(100, now);
+                        osc2.connect(dev);
+                        dev.connect(osc1.frequency);
+                        osc2.start(now);
+                        osc2.stop(now + 0.5);
+                        break;
+                    case 4:
+                        osc1.type = 'sine';
+                        osc1.frequency.setValueAtTime(50, now);
+                        osc1.frequency.exponentialRampToValueAtTime(1600, now + 0.5);
+                        break;
+                    case 5:
+                        osc1.type = 'triangle';
+                        osc1.frequency.setValueAtTime(150, now);
+                        osc1.frequency.linearRampToValueAtTime(50, now + 0.5);
+                        break;
+                    case 6:
+                        osc1.type = 'square';
+                        osc1.frequency.setValueAtTime(600, now);
+                        osc1.frequency.linearRampToValueAtTime(1200, now + 0.1);
+                        osc1.frequency.linearRampToValueAtTime(600, now + 0.2);
+                        break;
+                    case 7:
+                        osc1.type = 'sawtooth';
+                        osc1.frequency.setValueAtTime(440, now);
+                        osc1.frequency.setValueAtTime(494, now + 0.1);
+                        osc1.frequency.setValueAtTime(523, now + 0.2);
+                        osc1.frequency.exponentialRampToValueAtTime(40, now + 0.5);
+                        break;
+                    case 8:
+                        osc1.type = 'sine';
+                        osc1.frequency.setValueAtTime(120, now);
+                        osc1.frequency.exponentialRampToValueAtTime(10, now + 0.4);
+                        break;
+                }
+                
+                osc1.connect(gain);
+                gain.connect(masterGain);
+                osc1.start(now);
+                osc1.stop(now + 0.6);
+            }
+
+            const logContainer = document.getElementById('log-container');
+            function addLogEntry(text) {
+                const item = document.createElement('div');
+                item.textContent = `> ${text}`;
+                logContainer.appendChild(item);
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+
+            setInterval(() => {
+                const rPing = Math.floor(Math.random() * 20) + 30;
+                document.getElementById('ping-text').textContent = `${rPing}ms`;
+            }, 3000);
+
+            const ambCheck = document.getElementById('toggle-ambient');
+            ambCheck.addEventListener('change', () => {
+                if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+                if (ambCheck.checked) {
+                    ambientGain.gain.setTargetAtTime(0.08, now, 1);
+                    addLogEntry("AMBIENT DYNAMICS: ON (55Hz drone wave enabled)");
+                } else {
+                    ambientGain.gain.setTargetAtTime(0, now, 0.5);
+                    addLogEntry("AMBIENT DYNAMICS: MUTED");
+                }
+            });
+
+            const pads = document.querySelectorAll('.cyber-pad');
+            pads.forEach(pad => {
+                pad.addEventListener('click', () => {
+                    const id = parseInt(pad.dataset.pad);
+                    pad.classList.add('active');
+                    setTimeout(() => pad.classList.remove('active'), 250);
+                    triggerPadSynth(id);
+                    triggerWebExplosion();
+                    addLogEntry(`TRIGGER AUDIO FX: PAD_${id} COMPILATION.`);
+                });
+            });
+
+            const authBtn = document.getElementById('auth-btn');
+            const preloader = document.getElementById('preloader');
+            const mainContent = document.getElementById('main-content');
+
+            authBtn.addEventListener('click', () => {
+                initAudio();
+                triggerSlingSynth(1.5);
+                authBtn.style.transform = 'scale(0.9)';
+                authBtn.style.boxShadow = '0 0 50px var(--neon-blue)';
+                
+                setTimeout(() => {
+                    preloader.style.transform = 'scale(1.3) rotateZ(5deg)';
+                    preloader.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        preloader.style.display = 'none';
+                        mainContent.classList.remove('opacity-0', 'pointer-events-none');
+                        mainContent.classList.add('opacity-100');
+                        addLogEntry("ALCHEMAX MULTIVERSE TUNNEL ESTABLISHED.");
+                    }, 800);
+                }, 300);
+            });
+
+            const card = document.getElementById('tilt-card');
+            
+            document.addEventListener('mousemove', (e) => {
+                if (mainContent.classList.contains('pointer-events-none')) return;
+                
+                const cardRect = card.getBoundingClientRect();
+                const cardCenterX = cardRect.left + cardRect.width / 2;
+                const cardCenterY = cardRect.top + cardRect.height / 2;
+                
+                const xAxis = (cardCenterX - e.clientX) / 25;
+                const yAxis = (cardCenterY - e.clientY) / 15;
+                
+                card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            });
+
+            card.addEventListener('mouseenter', () => {
+                if (audioCtx) {
+                    const now = audioCtx.currentTime;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.linearRampToValueAtTime(1400, now + 0.1);
+                    gain.gain.setValueAtTime(0.05, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                    osc.connect(gain);
+                    gain.connect(masterGain);
+                    osc.start();
+                    osc.stop(now + 0.15);
+                }
+            });
+
+            document.addEventListener('mouseleave', () => {
+                card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+                card.style.transition = 'transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            });
+            document.addEventListener('mouseenter', () => {
+                card.style.transition = 'none';
+            });
+
+            const copyBtn = document.getElementById('copy-link-btn');
+            const toast = document.getElementById('toast');
+            
+            copyBtn.addEventListener('click', () => {
+                const dummy = document.createElement('input');
+                document.body.appendChild(dummy);
+                dummy.value = window.location.href;
+                dummy.select();
+                document.execCommand('copy');
+                document.body.removeChild(dummy);
+                
+                if (audioCtx) {
+                    triggerSlingSynth(0.8);
+                }
+                
+                toast.classList.remove('opacity-0', 'scale-95');
+                toast.classList.add('opacity-100', 'scale-100');
+                addLogEntry("DECRYPTION LINK EXPORTED TO CLIPBOARD.");
+                
+                setTimeout(() => {
+                    toast.classList.remove('opacity-100', 'scale-100');
+                    toast.classList.add('opacity-0', 'scale-95');
+                }, 2000);
+            });
+
+            const dlBtn = document.getElementById('dl-btn');
+            const downloadModal = document.getElementById('download-modal');
+            const modalPreviewImg = document.getElementById('modal-preview-img');
+            const openNewTabBtn = document.getElementById('open-new-tab-btn');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const sourceImg = document.querySelector('#tilt-card img');
+
+            dlBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                addLogEntry("SECURE FILE DOWNLOAD INITIATED...");
+                
+                const imgSrc = sourceImg.src;
+                modalPreviewImg.src = imgSrc;
+                
+                try {
+                    const response = await fetch(imgSrc);
+                    if (!response.ok) throw new Error("CORS limit or 404");
+                    const blob = await response.blob();
+                    const blobUrl = URL.createObjectURL(blob);
+                    
+                    const tempLink = document.createElement('a');
+                    tempLink.href = blobUrl;
+                    tempLink.download = "spider-man-2099-8k-7680x4320-12436.jpg";
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
+                    URL.revokeObjectURL(blobUrl);
+                    
+                    addLogEntry("DIRECT BINARY STREAM DOWNLOAD SUCCESSFUL.");
+                } catch (err) {
+                    addLogEntry("AUTOMATIC DOWNLOAD REJECTED BY HOST FRAME POLICY.");
+                    addLogEntry("ENGAGING MANUAL RECOVERY BYPASS PANEL...");
+                }
+
+                downloadModal.classList.remove('opacity-0', 'pointer-events-none');
+                if (audioCtx) {
+                    triggerSlingSynth(1.2);
+                }
+            });
+
+            const hideModal = () => {
+                downloadModal.classList.add('opacity-0', 'pointer-events-none');
+            };
+            modalCloseBtn.addEventListener('click', hideModal);
+            closeModalBtn.addEventListener('click', hideModal);
+            downloadModal.addEventListener('click', (e) => {
+                if (e.target === downloadModal) hideModal();
+            });
+
+            openNewTabBtn.addEventListener('click', () => {
+                window.open(sourceImg.src, '_blank');
+                addLogEntry("IMAGE DECRYPTED & SHIFTED TO INDEPENDENT TAB LAYER.");
+            });
+
+            const canvas = document.getElementById('web-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            let width, height;
+            let nodes = [];
+            let springs = [];
+            
+            const mouse = { x: null, y: null, px: null, py: null, radius: 150 };
+            
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                initWeb();
+            }
+
+            const config = {
+                springTension: 0.02,
+                damping: 0.94,
+                glitchStrength: 0.15,
+                speedMult: 1.5,
+                nodeCount: window.innerWidth < 768 ? 40 : 85
+            };
+
+            class Node {
+                constructor(x, y) {
+                    this.ox = x;
+                    this.oy = y;
+                    this.x = x;
+                    this.y = y;
+                    this.vx = 0;
+                    this.vy = 0;
+                    this.color = Math.random() > 0.45 ? '#ff003c' : '#00f0ff';
+                    this.radius = Math.random() * 2 + 1;
+                }
+
+                update() {
+                    const fx = (this.ox - this.x) * config.springTension;
+                    const fy = (this.oy - this.y) * config.springTension;
+                    
+                    this.vx += fx;
+                    this.vy += fy;
+                    
+                    if (mouse.x !== null) {
+                        const dx = this.x - mouse.x;
+                        const dy = this.y - mouse.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (dist < mouse.radius) {
+                            const force = (mouse.radius - dist) / mouse.radius;
+                            const angle = Math.atan2(dy, dx);
+                            
+                            this.vx -= Math.cos(angle) * force * 3 * config.speedMult;
+                            this.vy -= Math.sin(angle) * force * 3 * config.speedMult;
+                        }
+                    }
+
+                    if (Math.random() < config.glitchStrength * 0.2) {
+                        this.x += (Math.random() - 0.5) * 8 * config.glitchStrength;
+                        this.y += (Math.random() - 0.5) * 8 * config.glitchStrength;
+                    }
+
+                    this.vx *= config.damping;
+                    this.vy *= config.damping;
+                    
+                    this.x += this.vx;
+                    this.y += this.vy;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowColor = this.color;
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
+
+            function initWeb() {
+                nodes = [];
+                springs = [];
+                
+                const centerX = width / 2;
+                const centerY = height / 2;
+                const maxRadius = Math.max(width, height) * 0.9;
+                
+                const ringCount = window.innerWidth < 768 ? 4 : 6;
+                const radialCount = window.innerWidth < 768 ? 8 : 14;
+                
+                nodes.push(new Node(centerX, centerY));
+                
+                for (let r = 1; r <= ringCount; r++) {
+                    const currentRadius = (r / ringCount) * maxRadius * 0.85;
+                    for (let p = 0; p < radialCount; p++) {
+                        const angle = (p / radialCount) * Math.PI * 2;
+                        const x = centerX + Math.cos(angle) * currentRadius;
+                        const y = centerY + Math.sin(angle) * currentRadius;
+                        
+                        nodes.push(new Node(x, y));
+                    }
+                }
+
+                for (let p = 1; p <= radialCount; p++) {
+                    springs.push({ a: 0, b: p });
+                }
+
+                for (let r = 1; r <= ringCount; r++) {
+                    const ringOffset = 1 + (r - 1) * radialCount;
+                    const nextRingOffset = 1 + r * radialCount;
+                    
+                    for (let p = 0; p < radialCount; p++) {
+                        const curr = ringOffset + p;
+                        const next = ringOffset + ((p + 1) % radialCount);
+                        
+                        springs.push({ a: curr, b: next });
+                        
+                        if (r < ringCount) {
+                            const outerNode = nextRingOffset + p;
+                            springs.push({ a: curr, b: outerNode });
+                        }
+                    }
+                }
+            }
+
+            function triggerWebExplosion() {
+                nodes.forEach(node => {
+                    const forceAmount = (Math.random() + 0.5) * 15;
+                    const angle = Math.random() * Math.PI * 2;
+                    node.vx += Math.cos(angle) * forceAmount * config.speedMult;
+                    node.vy += Math.sin(angle) * forceAmount * config.speedMult;
+                });
+            }
+
+            window.addEventListener('mousemove', (e) => {
+                mouse.px = mouse.x;
+                mouse.py = mouse.y;
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+            });
+
+            window.addEventListener('mouseleave', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
+
+            canvas.addEventListener('mousedown', () => {
+                if (audioCtx) {
+                    triggerSlingSynth(1.1);
+                    triggerWebExplosion();
+                    addLogEntry("WEB FORCE ACCELERATION DISCHARGED.");
+                }
+            });
+
+            window.addEventListener('resize', resize);
+            resize();
+
+            const sliderGlitch = document.getElementById('slider-glitch');
+            const sliderTension = document.getElementById('slider-tension');
+            const sliderSpeed = document.getElementById('slider-speed');
+
+            sliderGlitch.addEventListener('input', () => {
+                const val = parseFloat(sliderGlitch.value);
+                config.glitchStrength = val;
+                document.getElementById('glitch-val-text').textContent = val.toFixed(2);
+                document.documentElement.style.setProperty('--glitch-val', `${val * 15}px`);
+                
+                if (ambientOsc && audioCtx) {
+                    const now = audioCtx.currentTime;
+                    ambientOsc.frequency.setValueAtTime(55 + (val * 100), now);
+                    document.getElementById('realtime-freq').textContent = `${(55 + (val * 100)).toFixed(1)}Hz`;
+                }
+                
+                addLogEntry(`MODIFIED DIMENSIONAL GLITCH AMPLITUDE: ${val}`);
+            });
+
+            sliderTension.addEventListener('input', () => {
+                const val = parseFloat(sliderTension.value);
+                config.springTension = val / 1000;
+                document.getElementById('tension-val-text').textContent = val.toFixed(2);
+                addLogEntry(`AĞ GERGİNLİĞİ REKTİFİYE EDİLDİ: ${val}`);
+            });
+
+            sliderSpeed.addEventListener('input', () => {
+                const val = parseFloat(sliderSpeed.value);
+                config.speedMult = val;
+                document.getElementById('speed-val-text').textContent = val.toFixed(2);
+                addLogEntry(`PORTAL HIZI RE-ORİANTE EDİLDİ: ${val}X`);
+            });
+
+            function animate() {
+                ctx.fillStyle = 'rgba(3, 3, 8, 0.18)';
+                ctx.fillRect(0, 0, width, height);
+
+                nodes.forEach(node => node.update());
+
+                springs.forEach(spring => {
+                    const nodeA = nodes[spring.a];
+                    const nodeB = nodes[spring.b];
+                    
+                    if (!nodeA || !nodeB) return;
+
+                    const dx = nodeA.x - nodeB.x;
+                    const dy = nodeA.y - nodeB.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    const initialLength = 120;
+                    const opacity = Math.max(0.02, Math.min(0.65, initialLength / dist));
+
+                    ctx.beginPath();
+                    ctx.moveTo(nodeA.x, nodeA.y);
+                    ctx.lineTo(nodeB.x, nodeB.y);
+                    
+                    const gradient = ctx.createLinearGradient(nodeA.x, nodeA.y, nodeB.x, nodeB.y);
+                    gradient.addColorStop(0, nodeA.color === '#ff003c' ? `rgba(255, 0, 60, ${opacity * 0.95})` : `rgba(0, 240, 255, ${opacity * 0.95})`);
+                    gradient.addColorStop(1, nodeB.color === '#ff003c' ? `rgba(255, 0, 60, ${opacity * 0.95})` : `rgba(0, 240, 255, ${opacity * 0.95})`);
+
+                    ctx.strokeStyle = gradient;
+                    ctx.lineWidth = 1.25;
+                    ctx.stroke();
+                });
+
+                nodes.forEach(node => node.draw());
+
+                requestAnimationFrame(animate);
+            }
+
+            window.onload = function () {
+                animate();
+            };
+        });
+    </script>
+</body>
+</html>
